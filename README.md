@@ -1,6 +1,6 @@
 # TVL Parser
 
-tvl is a custom image collection file format used store a custom bitmap formats, png, jpegs used for the size <https://pc2.pxtr.de/>
+tvl is a custom image collection file format used store a custom bitmap format, pngs and jpegs. Collected form this site <https://pc2.pxtr.de/>
 
 This parser has reverse engineered the file format and can convert it to the self describing format CBOR (Concise Binary Object Representation).
 
