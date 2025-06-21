@@ -4,12 +4,24 @@ services:
   dragonflydb:
     image: docker.dragonflydb.io/dragonflydb/dragonfly
     container_name: dragonflydb
+    stop_grace_period: 2m
     ports:
       - "6379:6379"
-    volumes:
-      - ./data:/data
     environment:
-      - DRAGONFLYDB_PASSWORD=your_password_here
+      - DFLY_snapshot_cron=*/5 * * * *
+      - DFLY_dbfilename=snapshot
+    volumes:
+      - data:/data
     restart: unless-stopped
+  app:
+    image: ghcr.io/lucsoft/tvl-parser:server-latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tvl-parser
+    ports:
+      - "8000:8000"
+    environment:
+      - REDIS_HOST=dragonflydb
 volumes:
   data:

@@ -1,5 +1,5 @@
-import { Arrays, Options, Primitives } from "jsr:@denosaurs/byte-type";
-import { CborMapDecodedStream, CborSequenceDecoderStream, CborSequenceEncoderStream, CborStreamOutput } from "jsr:@std/cbor";
+import { Arrays, Options, Primitives } from "@denosaurs/byte-type";
+import { CborMapDecodedStream, CborSequenceDecoderStream, CborSequenceEncoderStream, CborStreamOutput } from "@std/cbor";
 import { fileHeaderSection, imageSection, ParsedImage } from "./spec.ts";
 
 interface CborData {

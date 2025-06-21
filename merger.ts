@@ -1,6 +1,6 @@
-import { fail } from "jsr:@std/assert";
-import { CborSequenceEncoderStream } from "jsr:@std/cbor";
-import { walk } from "jsr:@std/fs";
+import { fail } from "@std/assert";
+import { CborSequenceEncoderStream } from "@std/cbor";
+import { walk } from "@std/fs";
 import importData from "./import.json" with { type: "json" };
 const entries = walk("./export", {
     includeSymlinks: false,

@@ -1,4 +1,4 @@
-import { Bitflags, Compounds, InnerType, Primitives, Strings } from "jsr:@denosaurs/byte-type";
+import { Bitflags, Compounds, InnerType, Primitives, Strings } from "@denosaurs/byte-type";
 
 export const fileHeaderSection = new Compounds.SizedStruct({
     magicHeader: new Strings.FixedLengthString(4),

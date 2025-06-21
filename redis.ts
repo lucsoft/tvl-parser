@@ -1,4 +1,4 @@
-import { connect, RedisPipeline } from "jsr:@db/redis";
+import { connect, RedisPipeline } from "@db/redis";
 
 const host = Deno.env.get("REDIS_HOST") ?? "127.0.0.1";
 

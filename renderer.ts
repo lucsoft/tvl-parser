@@ -1,5 +1,5 @@
-import { isLittleEndian } from "jsr:@denosaurs/byte-type";
-import { EventType, PixelFormat, Rect, Texture, TextureAccess, TextureCreator, WindowBuilder } from "jsr:@divy/sdl2";
+import { isLittleEndian } from "@denosaurs/byte-type";
+import { EventType, PixelFormat, Rect, Texture, TextureAccess, TextureCreator, WindowBuilder } from "@divy/sdl2";
 import { ParsedImage } from "./spec.ts";
 
 let frameCounter = 0;
@@ -17,7 +17,7 @@ function performanceLoop(noop: boolean, mainLoop: () => void) {
 function createTexture(creator: TextureCreator, image: ParsedImage): Texture {
     const format = isLittleEndian ? PixelFormat.ABGR8888 : PixelFormat.RGBA8888;
     const { data: { width, height, options: { hasTransparency } }, image: imageText } = image;
-    if (imageText.type !== "raw") {
+    if (imageText.type !== "tvl") {
         console.warn("Unsupported image type:", imageText.type, "for file:", image.data.fileName);
         throw new Error("Unsupported image type: " + imageText.type);
     }

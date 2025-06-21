@@ -1,4 +1,4 @@
-import { CborMapDecodedStream, CborStreamOutput } from "jsr:@std/cbor";
+import { CborMapDecodedStream, CborStreamOutput } from "@std/cbor";
 
 async function decompressStream(value: CborStreamOutput): Promise<unknown> {
     if (value instanceof CborMapDecodedStream) {

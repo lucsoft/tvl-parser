@@ -1,5 +1,5 @@
-import { CborSequenceDecoderStream } from "jsr:@std/cbor/sequence-decoder-stream";
-import { ulid } from "jsr:@std/ulid";
+import { CborSequenceDecoderStream } from "@std/cbor";
+import { ulid } from "@std/ulid";
 import { CborDepthDecoderStream } from "./loading.ts";
 import { redis } from "./redis.ts";
 import { Collection, ParsedImage } from "./spec.ts";
@@ -10,7 +10,15 @@ const stream = exportFile.readable
     .pipeThrough(new CborSequenceDecoderStream())
     .pipeThrough(new CborDepthDecoderStream<ParsedImage>());
 
-const collections: Collection[] = [];
+const currentList = await redis.hgetall("collections");
+const collections: Collection[] = currentList
+    .filter((_, index) => index % 2 === 1)
+    .map(data => JSON.parse(data))
+    .map((data): Collection => ({
+        id: data.id,
+        description: data.description,
+        fileName: data.fileName
+    }));
 
 for await (const element of stream) {
     if (!collections.find(collection => collection.fileName === element.source.fileName)) {

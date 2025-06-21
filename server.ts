@@ -1,7 +1,7 @@
-import { assert } from "jsr:@std/assert";
-import { CborType, encodeCbor } from "jsr:@std/cbor";
-import { route, Route } from "jsr:@std/http/unstable-route";
-import sharp from "npm:sharp";
+import { assert } from "@std/assert";
+import { CborType, encodeCbor } from "@std/cbor";
+import { route, Route } from "@std/http/unstable-route";
+import sharp from "sharp";
 import { pipeline, redis } from "./redis.ts";
 import { Collection, ErrorOr, RemoteImage } from "./spec.ts";
 
@@ -81,7 +81,7 @@ const routes: Route[] = [
     },
     {
         pattern: new URLPattern({ pathname: "/api/collections/search-by-id/:id" }),
-        handler: async (req, _, params) => {
+        handler: async (req, params) => {
             assert(params, "Missing params in request");
             const { id } = params.pathname.groups;
             assert(id, "Missing collection ID in request");
@@ -110,7 +110,7 @@ const routes: Route[] = [
     },
     {
         pattern: new URLPattern({ pathname: "/api/images/:id/image" }),
-        handler: async (req, _, params) => {
+        handler: async (req, params) => {
             assert(params, "Missing params in request");
             const { id } = params.pathname.groups;
             assert(id, "Missing image ID in request");
