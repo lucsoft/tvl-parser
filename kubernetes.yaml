@@ -1,0 +1,119 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dragonflydb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dragonflydb
+  template:
+    metadata:
+      labels:
+        app: dragonflydb
+    spec:
+      nodeSelector:
+        kubernetes.io/arch: arm64
+      containers:
+        - name: dragonflydb
+          image: docker.dragonflydb.io/dragonflydb/dragonfly
+          ports:
+            - containerPort: 6379
+          env:
+            - name: DFLY_snapshot_cron
+              value: "*/5 * * * *"
+            - name: DFLY_dbfilename
+              value: "snapshot"
+          volumeMounts:
+            - name: data
+              mountPath: /data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: dragonflydb-data-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dragonflydb-data-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dragonflydb
+spec:
+  selector:
+    app: dragonflydb
+  ports:
+    - protocol: TCP
+      port: 6379
+      targetPort: 6379
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tvl-parser-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tvl-parser
+  template:
+    metadata:
+      labels:
+        app: tvl-parser
+    spec:
+      nodeSelector:
+        kubernetes.io/arch: amd64
+      containers:
+        - name: tvl-parser
+          image: ghcr.io/lucsoft/tvl-parser:server-latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          env:
+            - name: REDIS_HOST
+              value: "dragonflydb"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tvl-parser-server
+spec:
+  selector:
+    app: tvl-parser
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+---
+# ingress
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tvl-parser-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: "lucsoft-allinkl"
+spec:
+  rules:
+    - host: tvl-cdn.lucsoft.de
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: tvl-parser-server
+                port:
+                  number: 8000
+  tls:
+    - hosts:
+        - "*.lucsoft.de"
+        - "lucsoft.de"
+      secretName: lucsoft-tls
