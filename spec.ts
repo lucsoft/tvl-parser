@@ -24,7 +24,7 @@ export const imageSection = new Compounds.Struct({
     unknown1: Primitives.u8,
     unknown2: Primitives.u8, // always 16 ???
     unknown3: Primitives.u8,
-    fileName: new Strings.CString()
+    fileName: Strings.cstring
 });
 
 
