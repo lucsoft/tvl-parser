@@ -1,0 +1,8 @@
+.DS_Store
+export/*
+*.cbor
+*.txt
+*.tvl
+*.gzip
+*.z
+.vscode
