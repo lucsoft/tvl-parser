@@ -87,9 +87,17 @@ const routes: Route[] = [
             assert(id, "Missing collection ID in request");
             const imagesInCollection = await redis.smembers(`collection:${id}`);
             const images: RemoteImage[] = [];
+
+            const pl = redis.pipeline();
             for (const imageKey of imagesInCollection) {
-                const filename = await redis.hget(imageKey, "fileName");
-                const dataType = await redis.hget(imageKey, "dataType");
+                pl.hget(imageKey, "fileName");
+                pl.hget(imageKey, "dataType");
+            }
+            const data = await pl.flush();
+
+            for (const [ index, imageKey ] of imagesInCollection.entries()) {
+                const filename = data[ index * 2 ];
+                const dataType = data[ index * 2 + 1 ];
                 images.push({
                     id: imageKey.split(":")[ 1 ],
                     fileName: filename as string,

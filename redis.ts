@@ -1,7 +1,11 @@
 import { connect, RedisPipeline } from "jsr:@db/redis";
 
+const host = Deno.env.get("REDIS_HOST") ?? "127.0.0.1";
+
+console.log("Connecting to Redis at", host);
+
 export const redis = await connect({
-    hostname: "127.0.0.1",
+    hostname: Deno.env.get("REDIS_HOST") ?? "127.0.0.1",
     port: 6379,
 });
 
