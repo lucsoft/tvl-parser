@@ -1,0 +1,15 @@
+# dragonflydb
+
+services:
+  dragonflydb:
+    image: docker.dragonflydb.io/dragonflydb/dragonfly
+    container_name: dragonflydb
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./data:/data
+    environment:
+      - DRAGONFLYDB_PASSWORD=your_password_here
+    restart: unless-stopped
+volumes:
+  data:

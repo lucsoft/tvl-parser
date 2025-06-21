@@ -38,3 +38,17 @@ export type ParsedImage = {
     data: ImageSectionData;
     image: Image;
 };
+
+export type ErrorOr<T> = { ok: true, data: T; } | { ok: false, error: string; };
+
+export type Collection = {
+    id: string;
+    fileName: string;
+    description: string;
+};
+
+export type RemoteImage = {
+    id: string;
+    fileName: string;
+    dataType: 'jpeg' | 'tvl' | 'unknown';
+};
