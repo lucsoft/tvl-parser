@@ -1,3 +1,9 @@
+from denoland/deno as build
+
+workdir /app/
+copy . /app/
+run deno run -A serve.ts build
+
 from joseluisq/static-web-server
 
-copy ./dist /public/
+copy --from=build /app/dist /public/

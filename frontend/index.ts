@@ -4,7 +4,6 @@ import { Collection, ErrorOr, RemoteImage } from "../spec.ts";
 const collections = asRef<Collection[]>([]);
 const endpoint = "https://tvl-cdn.lucsoft.de";
 
-
 createPage({
     label: "Collections",
     route: createRoute({
@@ -131,7 +130,9 @@ const collection = createPage({
                             Label(item.fileName)
                                 .setFontWeight("bold")
                                 .setTextSize("2xl"),
+                            Label(item.dataType + " File")
                         )
+                            .setGap("5px")
                     )
                         .setGap("2rem")
                         .setTemplateColumns("18rem auto")
