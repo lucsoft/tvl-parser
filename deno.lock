@@ -7,6 +7,8 @@
     "jsr:@denosaurs/byte-type@~0.4.1": "0.4.1",
     "jsr:@divy/sdl2@0.14": "0.14.0",
     "jsr:@std/assert@*": "1.0.13",
+    "jsr:@std/assert@1": "1.0.13",
+    "jsr:@std/assert@1.0.6": "1.0.6",
     "jsr:@std/assert@^1.0.13": "1.0.13",
     "jsr:@std/async@1": "1.0.9",
     "jsr:@std/bytes@1": "1.0.6",
@@ -15,22 +17,35 @@
     "jsr:@std/cbor@*": "0.1.8",
     "jsr:@std/cbor@~0.1.8": "0.1.8",
     "jsr:@std/cli@^1.0.20": "1.0.20",
+    "jsr:@std/cli@^1.0.6": "1.0.20",
     "jsr:@std/collections@1": "1.0.9",
+    "jsr:@std/datetime@0.225": "0.225.2",
     "jsr:@std/encoding@^1.0.10": "1.0.10",
+    "jsr:@std/encoding@^1.0.5": "1.0.10",
+    "jsr:@std/fmt@1.0.3": "1.0.3",
+    "jsr:@std/fmt@^1.0.3": "1.0.8",
     "jsr:@std/fmt@^1.0.8": "1.0.8",
+    "jsr:@std/fs@1.0.5": "1.0.5",
     "jsr:@std/fs@^1.0.18": "1.0.18",
     "jsr:@std/html@^1.0.4": "1.0.4",
     "jsr:@std/http@1.0.18": "1.0.18",
+    "jsr:@std/http@1.0.9": "1.0.9",
     "jsr:@std/http@^1.0.18": "1.0.18",
+    "jsr:@std/internal@^1.0.4": "1.0.8",
     "jsr:@std/internal@^1.0.6": "1.0.8",
     "jsr:@std/io@0.224.5": "0.224.5",
+    "jsr:@std/media-types@^1.0.3": "1.1.0",
     "jsr:@std/media-types@^1.1.0": "1.1.0",
     "jsr:@std/net@^1.0.4": "1.0.4",
+    "jsr:@std/path@1.0.3": "1.0.3",
+    "jsr:@std/path@^1.0.7": "1.1.0",
     "jsr:@std/path@^1.1.0": "1.1.0",
     "jsr:@std/random@0.1.0": "0.1.0",
     "jsr:@std/streams@^1.0.10": "1.0.10",
+    "jsr:@std/streams@^1.0.7": "1.0.10",
     "jsr:@std/streams@^1.0.9": "1.0.10",
     "jsr:@std/ulid@1": "1.0.0",
+    "npm:@types/node@*": "22.15.15",
     "npm:cluster-key-slot@1.1.0": "1.1.0",
     "npm:sharp@*": "0.34.2",
     "npm:sharp@~0.34.2": "0.34.2"
@@ -53,10 +68,16 @@
     "@divy/sdl2@0.14.0": {
       "integrity": "01347d34dd12cabd972eec340a142cdc6176f9e2720a72ab3515f73cf9d27bad"
     },
+    "@std/assert@1.0.6": {
+      "integrity": "1904c05806a25d94fe791d6d883b685c9e2dcd60e4f9fc30f4fc5cf010c72207",
+      "dependencies": [
+        "jsr:@std/internal@^1.0.4"
+      ]
+    },
     "@std/assert@1.0.13": {
       "integrity": "ae0d31e41919b12c656c742b22522c32fb26ed0cba32975cb0de2a273cb68b29",
       "dependencies": [
-        "jsr:@std/internal"
+        "jsr:@std/internal@^1.0.6"
       ]
     },
     "@std/async@1.0.9": {
@@ -78,32 +99,56 @@
     "@std/collections@1.0.9": {
       "integrity": "4f58104ead08a04a2199374247f07befe50ba01d9cca8cbb23ab9a0419921e71"
     },
+    "@std/datetime@0.225.2": {
+      "integrity": "45f0100554a912cd65f48089ef0a33aa1eb6ea21f08090840b539ab582827eaa"
+    },
     "@std/encoding@1.0.10": {
       "integrity": "8783c6384a2d13abd5e9e87a7ae0520a30e9f56aeeaa3bdf910a3eaaf5c811a1"
+    },
+    "@std/fmt@1.0.3": {
+      "integrity": "97765c16aa32245ff4e2204ecf7d8562496a3cb8592340a80e7e554e0bb9149f"
     },
     "@std/fmt@1.0.8": {
       "integrity": "71e1fc498787e4434d213647a6e43e794af4fd393ef8f52062246e06f7e372b7"
     },
+    "@std/fs@1.0.5": {
+      "integrity": "41806ad6823d0b5f275f9849a2640d87e4ef67c51ee1b8fb02426f55e02fd44e",
+      "dependencies": [
+        "jsr:@std/path@^1.0.7"
+      ]
+    },
     "@std/fs@1.0.18": {
       "integrity": "24bcad99eab1af4fde75e05da6e9ed0e0dce5edb71b7e34baacf86ffe3969f3a",
       "dependencies": [
-        "jsr:@std/path"
+        "jsr:@std/path@^1.1.0"
       ]
     },
     "@std/html@1.0.4": {
       "integrity": "eff3497c08164e6ada49b7f81a28b5108087033823153d065e3f89467dd3d50e"
     },
+    "@std/http@1.0.9": {
+      "integrity": "d409fc319a5e8d4a154e576c758752e9700282d74f31357a12fec6420f9ecb6c",
+      "dependencies": [
+        "jsr:@std/cli@^1.0.6",
+        "jsr:@std/encoding@^1.0.5",
+        "jsr:@std/fmt@^1.0.3",
+        "jsr:@std/media-types@^1.0.3",
+        "jsr:@std/net",
+        "jsr:@std/path@^1.0.7",
+        "jsr:@std/streams@^1.0.7"
+      ]
+    },
     "@std/http@1.0.18": {
       "integrity": "8d9546aa532c52a0cf318c74616db0638b4c1073405355d1b14f9e1591dccf20",
       "dependencies": [
-        "jsr:@std/cli",
-        "jsr:@std/encoding",
-        "jsr:@std/fmt",
-        "jsr:@std/fs",
+        "jsr:@std/cli@^1.0.20",
+        "jsr:@std/encoding@^1.0.10",
+        "jsr:@std/fmt@^1.0.8",
+        "jsr:@std/fs@^1.0.18",
         "jsr:@std/html",
-        "jsr:@std/media-types",
+        "jsr:@std/media-types@^1.1.0",
         "jsr:@std/net",
-        "jsr:@std/path",
+        "jsr:@std/path@^1.1.0",
         "jsr:@std/streams@^1.0.10"
       ]
     },
@@ -121,6 +166,9 @@
     },
     "@std/net@1.0.4": {
       "integrity": "2f403b455ebbccf83d8a027d29c5a9e3a2452fea39bb2da7f2c04af09c8bc852"
+    },
+    "@std/path@1.0.3": {
+      "integrity": "cd89d014ce7eb3742f2147b990f6753ee51d95276bfc211bc50c860c1bc7df6f"
     },
     "@std/path@1.1.0": {
       "integrity": "ddc94f8e3c275627281cbc23341df6b8bcc874d70374f75fec2533521e3d6886"
@@ -273,6 +321,12 @@
       "os": ["win32"],
       "cpu": ["x64"]
     },
+    "@types/node@22.15.15": {
+      "integrity": "sha512-R5muMcZob3/Jjchn5LcO8jdKwSCbzqmPB6ruBxMcf9kbxtniZHP327s6C37iOfuw8mbKK3cAQa7sEl7afLrQ8A==",
+      "dependencies": [
+        "undici-types"
+      ]
+    },
     "cluster-key-slot@1.1.0": {
       "integrity": "sha512-2Nii8p3RwAPiFwsnZvukotvow2rIHM+yQ6ZcBXGHdniadkYGZYiGmkHJIbZPIV9nfv7m/U1IPMVVcAhoWFeklw=="
     },
@@ -349,7 +403,90 @@
     },
     "tslib@2.8.1": {
       "integrity": "sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w=="
+    },
+    "undici-types@6.21.0": {
+      "integrity": "sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ=="
     }
+  },
+  "remote": {
+    "https://deno.land/x/denoflate@1.2.1/mod.ts": "f5628e44b80b3d80ed525afa2ba0f12408e3849db817d47a883b801f9ce69dd6",
+    "https://deno.land/x/denoflate@1.2.1/pkg/denoflate.js": "b9f9ad9457d3f12f28b1fb35c555f57443427f74decb403113d67364e4f2caf4",
+    "https://deno.land/x/denoflate@1.2.1/pkg/denoflate_bg.wasm.js": "d581956245407a2115a3d7e8d85a9641c032940a8e810acbd59ca86afd34d44d",
+    "https://deno.land/x/esbuild@v0.24.0/mod.js": "15b51f08198c373555700a695b6c6630a86f2c254938e81be7711eb6d4edc74e",
+    "https://deno.land/x/esbuild_serve@1.5.0/features/devserver.ts": "0fae4256d534a535556b29107f7fc2f8147f6c09c904eefb1bc94894f7621484",
+    "https://deno.land/x/esbuild_serve@1.5.0/features/filesystem.ts": "280665276ec274556a525e457996ffaf65be47b844b33114726e9f69793a838b",
+    "https://deno.land/x/esbuild_serve@1.5.0/features/httpImports.ts": "a0f09389822a3d10dd1475d0c8b358e02e78219f92e572895ad2917f36e67847",
+    "https://deno.land/x/esbuild_serve@1.5.0/features/templates.ts": "682762a98e0a587b21eba5ce776cb8fdce5ee72b97c3e01bc2bf81694a5bb4a6",
+    "https://deno.land/x/esbuild_serve@1.5.0/mod.ts": "8b8df4e8588ad29c6270e7a8ebad635cf6a27e53144267335f738e5750d4b49e",
+    "https://deno.land/x/esbuild_serve@1.5.0/types.ts": "4c8409c973011099a762fb865a290e651edf69e9c049e14b25fb1cf4b7b34d44",
+    "https://deno.land/x/zod@v3.23.8/ZodError.ts": "528da200fbe995157b9ae91498b103c4ef482217a5c086249507ac850bd78f52",
+    "https://deno.land/x/zod@v3.23.8/errors.ts": "5285922d2be9700cc0c70c95e4858952b07ae193aa0224be3cbd5cd5567eabef",
+    "https://deno.land/x/zod@v3.23.8/external.ts": "a6cfbd61e9e097d5f42f8a7ed6f92f93f51ff927d29c9fbaec04f03cbce130fe",
+    "https://deno.land/x/zod@v3.23.8/helpers/enumUtil.ts": "54efc393cc9860e687d8b81ff52e980def00fa67377ad0bf8b3104f8a5bf698c",
+    "https://deno.land/x/zod@v3.23.8/helpers/errorUtil.ts": "7a77328240be7b847af6de9189963bd9f79cab32bbc61502a9db4fe6683e2ea7",
+    "https://deno.land/x/zod@v3.23.8/helpers/parseUtil.ts": "c14814d167cc286972b6e094df88d7d982572a08424b7cd50f862036b6fcaa77",
+    "https://deno.land/x/zod@v3.23.8/helpers/partialUtil.ts": "998c2fe79795257d4d1cf10361e74492f3b7d852f61057c7c08ac0a46488b7e7",
+    "https://deno.land/x/zod@v3.23.8/helpers/typeAliases.ts": "0fda31a063c6736fc3cf9090dd94865c811dfff4f3cb8707b932bf937c6f2c3e",
+    "https://deno.land/x/zod@v3.23.8/helpers/util.ts": "30c273131661ca5dc973f2cfb196fa23caf3a43e224cdde7a683b72e101a31fc",
+    "https://deno.land/x/zod@v3.23.8/index.ts": "d27aabd973613985574bc31f39e45cb5d856aa122ef094a9f38a463b8ef1a268",
+    "https://deno.land/x/zod@v3.23.8/locales/en.ts": "a7a25cd23563ccb5e0eed214d9b31846305ddbcdb9c5c8f508b108943366ab4c",
+    "https://deno.land/x/zod@v3.23.8/mod.ts": "ec6e2b1255c1a350b80188f97bd0a6bac45801bb46fc48f50b9763aa66046039",
+    "https://deno.land/x/zod@v3.23.8/types.ts": "1b172c90782b1eaa837100ebb6abd726d79d6c1ec336350c8e851e0fd706bf5c",
+    "https://esm.sh/signal-polyfill@0.2.2": "9b0dc5dc2e7cbd430eecb90d51633117592db583f46d0a9fb61aa6d2cf27a334",
+    "https://esm.sh/signal-polyfill@0.2.2/denonext/signal-polyfill.mjs": "26917249e05ac507f11134c85a27bbaa3b82cfe6aec9cde568b8da6cd4462eec",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/components/appendBody.ts": "dab1eb12b7240c96eaa2f469c89e1eac279d79050648664611120fec152dc172",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/components/entry.ts": "9750699104819bfdeecfe78e959c08a0ad586e7366fd263e88d1f278311f4d57",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/components/form/button.ts": "83a9b60aeeac8f135b64cddcc40fd869bdecbf4cf2e83157f56ad9c7746e522f",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/components/form/checkbox.ts": "c122d1f2f4c247f97cb90a24f47dfeda125791d9020fcdd51c6929276cfad23c",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/components/form/dropdown.ts": "4bbbcd243e88d7715310eb7d372ae215b87de1973da1704e5f41419c503344db",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/components/form/inlineInput.ts": "caa0bf8a79f9dd7b8faed4ca30ea123199ec692789d689738b4f4d1a803572a8",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/components/form/input.ts": "d3f7b83db646ef6938d3d900ccdd1c4fc8c8832f0ad596cc0100a5e979fd0a47",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/components/icons.ts": "49abf161b8b715104aaf86b0436dda05054b003cf6d094570fe312d288898d31",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/components/image.ts": "2fa3cdaad21901addd9dd0af22b372ad34b6ad0a0a4f2d4700669822599b5c34",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/components/menu.ts": "c21d9d17ff7d498346894c5bf2df3fc30388fe770916533176d2eb790bd630a8",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/components/misc/mediaQueryRef.ts": "e36e77fd7c4785da8eb5bee1da9af91ce7af53d8938a75b82a8ee68b01ce6b17",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/components/misc/mobileQuery.ts": "9ac034e1290e72983cd119aea110e6d6cd1f2b4800f9f59176799ce58f91943a",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/components/misc/themeQuery.ts": "b1e12ab5da0d74fd63bc332ddee9d15546cd1f242576a3df6c1125e182863f40",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/components/mod.ts": "c34ef97ce5f3d1fd119afbe06a967ce91b32798154ad4efb9f787fb7e2b2eed2",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/components/spinner.ts": "ab71126db9aaa8f70fa3e9f10ea10719c14dbfcc37487a6fba85f057f6125096",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/components/stacking/dialogContainer.ts": "6c52ebc3d479067e686d6dbb39d5f8e2995540812960b4c1d0a275e079722fae",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/components/stacking/sheetHeader.ts": "a5912cb3bbed44f4c5a0c0138ce5c1713f9fc2a8ab752d26a35f6f6ede039bff",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/components/stacking/sheets.ts": "660ceef01f88cc1bb6d9f2e4f8312f9a0f749a2d27de483c50c84abf6a172f9c",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/components/styles.ts": "c3e5f9e1a1d7add09956eb8393eeee99de66b88d2d140cbbdb3b9f4eb7ceff6d",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/components/table.ts": "4f06f8362e38eed50a25129b38ceb7e0b2a2d24bfbc438d798a73ccbf4f23133",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/components/theme.ts": "f69a6a25963978ea2a2d365ca3b0a19fda4fe155f04ad31821c54bb1d66d7485",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/core/color.ts": "de5ebd0f46e30fa7a8eeeee1fb3d7f393bb3f079e9bfa29cdf6726e5363dd34f",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/core/components.ts": "6d6cc6628ffd81bc52d4fb3df3be2da4d24cc2934aab2b9c2a59ad44e9bdea15",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/core/cssTemplate.ts": "b4af098ac1adb51f119cfe005405303e48db7793bab7a0f977e49e5afeac3a74",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/core/layout/async.ts": "39fd1a2a747319165b71644bfd671a08fef2e6f6328d163dc76a5f53643435af",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/core/layout/box.ts": "17cb6cafb8bea80796592b93c56b84238790924e6aeae38f6a272eb47c7139c2",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/core/layout/content.ts": "1d9955bbae6835b06756a086aba8216115d3b6cad72f80fa50e926599d857c83",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/core/layout/empty.ts": "1c4c26d50122026cffe8b4bec26bbd27e99563a252c158173a7b3df73ef0aa35",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/core/layout/grid.ts": "325c5496613883a29b45ec45e6784383d215c6d240dad163a04cc294dda3f86f",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/core/layout/label.ts": "27d50a663c3399b7b8848883d2dce4db854025bab80a2b493c587dcdb3cfaadd",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/core/layout/list.ts": "82083fa2a078d9f83a647863f9747ef9022ce1148b490d86aac547bebf89a5a1",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/core/layout/mod.ts": "81457642bb2b9b2980be6e8fde16c4105ba502006e502d34a890ec2d1e114b38",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/core/layout/popover.ts": "808a156cc9322a680a2a971150b99300f098553fafc52a8d1b36ea9c24154bde",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/core/layout/slot.ts": "38145d7f85b0b11b59fb52583d0c80912f833a08d2a20696017c9b8e45497c9e",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/core/lazy.ts": "0c01ae3051c6c7a0601d9d6cbddba31bf45742161cc1288b4690b7fd1528b348",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/core/mod.ts": "1d9331f2fac5f6077210be69822ae17b1e52adbc49fc9eedddb3072f86516686",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/core/state.ts": "d8bfc0a45340d3947bf9bbbbbd03d8d14e0f72aea9a5b998b2227c11a76f3427",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/core/types.ts": "da38a22871e0084b7f238ab9213d71bd855ee603b63134b39084732bb1216384",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/extended/filePicker.ts": "8f68f067fc8ec127b5d9da5e3451f492c9479934de32bcf9f7e859b34871dc7d",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/extended/fromFormEntries.ts": "c8d2d16bfef8901fae7524b569c28e921e240373aa7dd6261e986a35ec6470a9",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/extended/iterableWeakMap.ts": "b0228917f4638eb9ec59b196d4360361b8cfb7c57d4cc4f5a8ae73c30f0639b9",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/extended/keyValueStore.ts": "0dd3153bd852090b9038fe04c7e8490c86a683e1679d71fcda08cf49a59462de",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/extended/mod.ts": "4f555932a60017161de23571cd336f6c9eef90842a6614650029293fcb14db5b",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/extended/network.ts": "20c20c9658f6e65edfe5a72c7bb8cf5bb962a1eb8ca997e88a2a3422e4859935",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/extended/scheduler.ts": "02060a33b3c621c56cac031cb09e2e42644409053a333dd92d3b77521a7eaa1e",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/extended/stableRequests.ts": "754d2eae14be3264dd972b814e5dcd8711a2c3191b07b068d5e4c7f18672412f",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/extended/stableWebSockets.ts": "156c6c05a999608ad48a9b82ace71d765c84a6a13d26b62be692b3001e049367",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/mod.ts": "cd627fa5252c326679c4bfe79d9fe60a1567ea4d77702a0b980d8ca70ec18b18",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/navigation/Menu.ts": "d13b23c9783a6cc287c20de9e6a89f1e5695713d945c90d5ed0da1f6a435ffda",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/navigation/Navigation.ts": "15a458b9d3d164575ff082db1a3312cfaac2eb4ae4ab2d4c669747825eebc08a",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/navigation/Page.ts": "a8809617a67370fbbeec6c63d1a42139eaa4e6189f11fea4aff41f3df996a063",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/navigation/Route.ts": "d78ac0e70287db1b6ae3b55d0befb3f4ce86e279b50673a6a083d87969f8eeaf",
+    "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/navigation/mod.ts": "4b307468f2674b9251fb8f67bfea43506a1aa5e155970ce8ac62760410b0e59a"
   },
   "workspace": {
     "dependencies": [

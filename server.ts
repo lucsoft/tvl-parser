@@ -5,6 +5,15 @@ import sharp from "sharp";
 import { pipeline, redis } from "./redis.ts";
 import { Collection, ErrorOr, RemoteImage } from "./spec.ts";
 
+const standardHeaders = (req: Request) => ({
+    // cors headers
+    "Access-Control-Allow-Origin": req.headers.get("Origin") ?? "*",
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Accept",
+    "Access-Control-Allow-Credentials": "true",
+    "Access-Control-Max-Age": "3600",
+});
+
 function serveFail<T extends Error>(req: Request, error: T) {
     if (req.headers.get("Accept")?.includes("application/json")) {
         return new Response(JSON.stringify(<ErrorOr<T>>{
@@ -12,8 +21,9 @@ function serveFail<T extends Error>(req: Request, error: T) {
             error: error.message
         }), {
             headers: {
+                ...standardHeaders(req),
                 "Content-Type": "application/json",
-                "Cache-Control": "public, max-age=3600"
+                "Cache-Control": "public, max-age=3600",
             }
         });
     }
@@ -23,6 +33,7 @@ function serveFail<T extends Error>(req: Request, error: T) {
             error: error.message
         } as CborType), {
             headers: {
+                ...standardHeaders(req),
                 "Content-Type": "application/cbor",
                 "Cache-Control": "public, max-age=3600"
             }
@@ -40,6 +51,7 @@ function serveData<T extends CborType>(req: Request, data: T) {
             data
         }), {
             headers: {
+                ...standardHeaders(req),
                 "Content-Type": "application/json",
                 "Cache-Control": "public, max-age=3600"
             }
@@ -51,6 +63,7 @@ function serveData<T extends CborType>(req: Request, data: T) {
             data
         }), {
             headers: {
+                ...standardHeaders(req),
                 "Content-Type": "application/cbor",
                 "Cache-Control": "public, max-age=3600"
             }
