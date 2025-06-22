@@ -132,6 +132,7 @@ const collection = createPage({
             }
         }
     )
+        .setCssStyle("gridTemplateRows", "max-content")
         .setHeight("100dvh")
 );
 
