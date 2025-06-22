@@ -117,3 +117,62 @@ spec:
         - "*.lucsoft.de"
         - "lucsoft.de"
       secretName: lucsoft-tls
+---
+# frontend
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tvl-parser-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tvl-parser-frontend
+  template:
+    metadata:
+      labels:
+        app: tvl-parser-frontend
+    spec:
+      containers:
+        - name: tvl-parser-frontend
+          image: ghcr.io/lucsoft/tvl-parser:client-latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tvl-parser-frontend
+spec:
+  selector:
+    app: tvl-parser-frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+---
+# ingress for frontend
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tvl-parser-frontend-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: "lucsoft-allinkl"
+spec:
+  tls:
+    - hosts:
+        - "*.lucsoft.de"
+        - "lucsoft.de"
+      secretName: lucsoft-tls
+  rules:
+    - host: tvl.lucsoft.de
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: tvl-parser-frontend
+                port:
+                  number: 80

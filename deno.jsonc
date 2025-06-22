@@ -1,6 +1,7 @@
 {
     "tasks": {
-        "server": "deno run -A server.ts"
+        "server": "deno run -A server.ts",
+        "push": "docker buildx build --platform linux/amd64,linux/arm64 --tag ghcr.io/lucsoft/tvl-parser:server-latest --push ."
     },
     "imports": {
         "@db/redis": "jsr:@db/redis@^0.40.0",

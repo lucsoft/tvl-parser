@@ -1,6 +1,4 @@
-# deno
-
-from --platform=linux/amd64 denoland/deno
+from denoland/deno
 
 workdir /app/
 
