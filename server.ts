@@ -215,6 +215,24 @@ const routes: Route[] = [
                     }
                 });
             }
+            else if (dataType === "jpeg") {
+                const data = await redis.sendCommand("HGET", [ imageKey, "data" ], {
+                    returnUint8Arrays: true
+                });
+
+                const image = await sharp(data as Uint8Array)
+                    .webp()
+                    .toBuffer();
+
+                await redis.hset(imageKey, "webp", image);
+
+                return new Response(image, {
+                    headers: {
+                        "Content-Type": "image/webp",
+                        "Cache-Control": "public, max-age=3600"
+                    }
+                });
+            }
 
             return serveFail(req, new Error("Image format conversion not implemented yet"));
         }
