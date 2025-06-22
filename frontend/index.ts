@@ -1,8 +1,34 @@
-import { appendBody, asRef, Color, Content, createPage, createRoute, Entry, Grid, Image, Label, List, MaterialIcon, PageRouter, PrimaryButton, StartRouting, WebGenTheme } from "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/mod.ts";
+import { appendBody, asRef, Color, Content, createPage, createRoute, Entry, Grid, Image, Label, List, MaterialIcon, PageRouter, PrimaryButton, ref, StartRouting, WebGenTheme } from "https://raw.githubusercontent.com/lucsoft/WebGen/refs/heads/main/mod.ts";
 import { Collection, ErrorOr, RemoteImage } from "../spec.ts";
 
-const collections = asRef<Collection[]>([]);
 const endpoint = "https://tvl-cdn.lucsoft.de";
+
+const dataCollections = asRef<Collection[]>([]);
+const dataCollection = asRef<Collection | undefined>(undefined);
+const dataImagesForCurrentCollection = asRef<RemoteImage[]>([]);
+
+async function request<T>(request: Request): Promise<T | undefined> {
+    const response = await fetch(new Request(request, {
+        headers: {
+            "Accept": "application/json",
+        }
+    }));
+
+    if (!response.ok) {
+        console.error("Failed to fetch collections:", response.status, response.statusText);
+        alert("Failed to fetch collections. Please try again later.");
+        return;
+    }
+
+    const data = await response.json() as ErrorOr<T>;
+
+    if (!data.ok) {
+        console.error("Error fetching collections:", data.error);
+        alert("Error fetching collections: " + data.error);
+        return;
+    }
+    return data.data;
+}
 
 createPage({
     label: "Collections",
@@ -10,27 +36,9 @@ createPage({
         path: "/",
         events: {
             onActive: async () => {
-                const response = await fetch(`${endpoint}/api/collections`, {
-                    headers: {
-                        "Accept": "application/json",
-                    }
-                });
-
-                if (!response.ok) {
-                    console.error("Failed to fetch collections:", response.status, response.statusText);
-                    alert("Failed to fetch collections. Please try again later.");
-                    return;
-                }
-
-                const data = await response.json() as ErrorOr<Collection[]>;
-
-                if (!data.ok) {
-                    console.error("Error fetching collections:", data.error);
-                    alert("Error fetching collections: " + data.error);
-                    return;
-                }
-
-                collections.value = data.data;
+                const data = await request<Collection[]>(new Request(`${endpoint}/api/collections`));
+                if (!data) return;
+                dataCollections.value = data;
             }
         }
     })
@@ -42,7 +50,7 @@ createPage({
             .setMargin("50px 0 10px"),
         {
             draw: () => {
-                return List(collections, 100, item =>
+                return List(dataCollections, 100, item =>
                     Entry(
                         Grid(
                             Label(item.fileName)
@@ -56,7 +64,6 @@ createPage({
                         .onPromiseClick(async () => {
                             const url = new URL(collection.route.entry.patternUrl, globalThis.location.origin);
                             url.searchParams.set("collection", item.id);
-                            url.searchParams.set("collectionName", item.fileName);
                             await navigation.navigate(url.toString()).finished;
                         })
                 ).draw();
@@ -66,8 +73,6 @@ createPage({
         .setHeight("100dvh")
 );
 
-const collectionTitle = asRef<string>("");
-const images = asRef<RemoteImage[]>([]);
 const collection = createPage({
     label: "Item",
     route: createRoute({
@@ -75,28 +80,12 @@ const collection = createPage({
         events: {
             onActive: async () => {
                 const url = new URL(globalThis.location.href);
-                collectionTitle.value = url.searchParams.get("collectionName") ?? "Unknown Collection";
+                const dataCollections = await request<Collection[]>(new Request(`${endpoint}/api/collections`));
+                if (!dataCollections) return;
+                dataCollection.value = dataCollections.find(c => c.id === url.searchParams.get("collection"));
 
-                const response = await fetch(`${endpoint}/api/collections/search-by-id/${url.searchParams.get("collection")}`, {
-                    headers: {
-                        "Accept": "application/json",
-                    }
-                });
-
-                if (!response.ok) {
-                    console.error("Failed to fetch collection images:", response.status, response.statusText);
-                    alert("Failed to fetch collection images. Please try again later.");
-                    return;
-                }
-                const data = await response.json() as ErrorOr<RemoteImage[]>;
-
-                if (!data.ok) {
-                    console.error("Error fetching collection images:", data.error);
-                    alert("Error fetching collection images: " + data.error);
-                    return;
-                }
-
-                images.value = data.data;
+                const dataImages = await request<RemoteImage[]>(new Request(`${endpoint}/api/collections/search-by-id/${url.searchParams.get("collection")}`));
+                dataImagesForCurrentCollection.value = dataImages ?? [];
             }
         }
     }),
@@ -109,17 +98,18 @@ const collection = createPage({
                     .onClick(() => navigation.navigate("/"))
                     .setMargin("16px 0 0"),
             )
-
                 .setJustifyItems("start"),
-            Label(collectionTitle)
+            Label(dataCollection.map(collection => collection?.fileName ?? ""))
                 .setFontWeight("bold")
                 .setTextSize("3xl")
                 .setMargin("20px 0 10px"),
-        ),
+            Label(ref`${dataCollection.map(collection => collection?.description ?? "")} – ${dataImagesForCurrentCollection.map(images => images.length.toLocaleString())} Images`)
+        )
+            .setMargin("0 0 20px"),
         {
             // workaround: reconnecting of virtual list not working properly
             draw: () => {
-                return List(images, 200, item => Entry(
+                return List(dataImagesForCurrentCollection, 200, item => Entry(
                     Grid(
                         Grid(
                             Image(`${endpoint}/api/images/${item.id}/image`, `Image of ${item.fileName}`)
