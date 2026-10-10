@@ -16,11 +16,12 @@ function performanceLoop(noop: boolean, mainLoop: () => void) {
 
 function createTexture(creator: TextureCreator, image: ParsedImage): Texture {
     const format = isLittleEndian ? PixelFormat.ABGR8888 : PixelFormat.RGBA8888;
-    const { data: { width, height, options: { hasTransparency } }, image: imageText } = image;
-    if (imageText.type !== "tvl") {
+    const { data: { width, height, options, transparentColorIndex }, image: imageText } = image;
+    if (imageText.type !== "tvl" || options.storage !== "palette") {
         console.warn("Unsupported image type:", imageText.type, "for file:", image.data.fileName);
         throw new Error("Unsupported image type: " + imageText.type);
     }
+    const { hasTransparency } = options;
     const { colorPalette, indexedColors } = imageText;
     const texture = creator.createTexture(format, TextureAccess.Static, width, height);
     const data = new Uint8Array(width * height * 4);
@@ -32,7 +33,7 @@ function createTexture(creator: TextureCreator, image: ParsedImage): Texture {
             const r = colorPalette[ indexColorPalette * 3 ];
             const g = colorPalette[ indexColorPalette * 3 + 1 ];
             const b = colorPalette[ indexColorPalette * 3 + 2 ];
-            const a = indexColorPalette === 0 && hasTransparency ? 0 : 255; // Handle transparency
+            const a = indexColorPalette === transparentColorIndex && hasTransparency ? 0 : 255; // Handle transparency
             if (a === 0)
                 continue; // Skip transparent pixels
             data[ (row * width + col) * 4 ] = r;
