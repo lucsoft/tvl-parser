@@ -1,4 +1,6 @@
 import { Arrays, Options } from "@denosaurs/byte-type";
+import zlib from "node:zlib";
+import { Duplex } from "node:stream";
 import { CborMapDecodedStream, CborSequenceDecoderStream, CborSequenceEncoderStream, CborStreamOutput } from "@std/cbor";
 import { fileHeaderSection, imageSection, paletteSize as paletteSizeCodec, ParsedImage } from "./spec.ts";
 
@@ -46,28 +48,26 @@ await file.readable
                     Deno.exit(1);
                 }
 
-                if (data.height === 0 && data.width === 0 && data.contentSize === 0) {
-                    console.log("CRAZY file?");
-                    console.log(data);
+                // A zero sized record terminates the file. z2301.tvl ends with one that
+                // still claims contentSize 9, so the dimensions are the reliable signal.
+                if (data.width === 0 || data.height === 0) {
                     break;
-                };
+                }
                 const storage = data.options.storage;
 
                 if (storage === "palette" || storage === "rgb" || storage === "rgba") {
                     const paletteSize = paletteSizeCodec.readPacked(dataView, options);
 
-                    if (data.contentSize > 1024 * 1024) {
-                        console.warn("Skipping image because it is larger than 1 MB:", element.fileName, data.contentSize);
-                        continue;
-                    }
                     const contentType = new Arrays.Uint8ArrayType(data.contentSize - 1); // because the first byte is the palette size
                     const content = contentType.readPacked(dataView, options);
 
                     try {
-                        const stream = new Response(content as Uint8Array<ArrayBuffer>).body!
-                            .pipeThrough(new DecompressionStream("deflate"));
-
-                        const imageData = await new Response(stream).bytes();
+                        // contentSize can be larger than the deflate stream it holds - 21 of
+                        // 434212 records carry slack after the stream ends. DecompressionStream
+                        // rejects that and throws its output away with it, Z_SYNC_FLUSH does not.
+                        const imageData = zlib.inflateSync(content, {
+                            finishFlush: zlib.constants.Z_SYNC_FLUSH,
+                        });
                         const image: ParsedImage = {
                             source: {
                                 fileName: element.fileName,
@@ -90,10 +90,7 @@ await file.readable
                         imageCount++;
                         controller.enqueue(image);
                     } catch (error) {
-
-                        // Deno.exit(1);
                         console.error("Failed to process image:", element.fileName, error);
-                        // await Deno.writeFile("decompress_fail" + element.fileName + ".txt", content);
                     }
                 } else {
                     const contentType = new Arrays.Uint8ArrayType(data.contentSize);
@@ -129,7 +126,11 @@ await file.readable
         }
     }))
     .pipeThrough(new CborSequenceEncoderStream())
-    .pipeThrough(new CompressionStream("deflate"))
+    .pipeThrough(
+        Duplex.toWeb(zlib.createDeflate({ level: 3 })) as unknown as ReadableWritablePair<Uint8Array<ArrayBuffer>, Uint8Array<ArrayBufferLike>>,
+    )
     .pipeTo(exportFile.writable);
 
+const totalMs = performance.now() - startTime;
 console.log(unsupportedImages, "unsupported images found.");
+console.log(`Done: ${imageCount} images in ${(totalMs / 1000).toFixed(2)} s (${(imageCount / (totalMs / 1000)).toFixed(0)} images/s)`);
