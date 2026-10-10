@@ -93,7 +93,12 @@ export const imageSection = new Compounds.Struct({
     offset: Primitives.u32,
     width: Primitives.u16,
     height: Primitives.u16,
-    /** Payload size. For `palette`, `rgb` and `rgba` this includes the leading palette size byte. */
+    /**
+     * Payload size, including the leading palette size byte for `palette`,
+     * `rgb` and `rgba`. Exact for every record, but 21 deflate payloads were
+     * written over a longer predecessor and keep its tail inside this size -
+     * so it bounds the stream rather than ending it.
+     */
     contentSize: Primitives.u32,
     options: imageOptions,
     /** Only meaningful for `palette` records with `hasTransparency`. Defaults to 0. */
@@ -115,14 +120,34 @@ export const paletteSize: SizedType<number> = map(
     (value) => value === 256 ? 0 : value,
 );
 
+/**
+ * Payloads are stored the way the file holds them, still deflated. Inflating
+ * them during conversion expands 881 MB to 7.5 GB and the result then has to be
+ * compressed again to land at roughly the same size - so the export keeps the
+ * compressed bytes and callers inflate what they actually need.
+ */
 export type Image =
-    /** Deflated: `paletteSize * 3` RGB bytes, then `width * height` indices. */
-    | { type: "tvl", paletteSize: number, colorPalette: Uint8Array; indexedColors: Uint8Array; }
-    | { type: "rgb", data: Uint8Array; }
-    | { type: "rgba", data: Uint8Array; }
-    | { type: "jpeg", data: Uint8Array; }
-    | { type: "png", data: Uint8Array; }
+    /** Inflates to `paletteSize * 3` RGB bytes followed by `width * height` indices. */
+    | { type: "tvl", paletteSize: number, deflated: Uint8Array; }
+    /** Inflates to `width * height * 3`, or `* 4` for `rgba`. */
+    | { type: "rgb" | "rgba", deflated: Uint8Array; }
+    /** Stored verbatim, already a compressed file format. */
+    | { type: "jpeg" | "png", data: Uint8Array; }
     | { type: "unknown", data: Uint8Array; };
+
+/** Bytes a record's payload inflates to, used to check it during conversion. */
+export function inflatedSize(data: ImageSectionData, paletteSize: number): number {
+    switch (data.options.storage) {
+        case "palette":
+            return 3 * paletteSize + data.width * data.height;
+        case "rgb":
+            return data.width * data.height * 3;
+        case "rgba":
+            return data.width * data.height * 4;
+        default:
+            return 0;
+    }
+}
 
 export type ParsedImage = {
     source: {

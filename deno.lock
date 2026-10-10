@@ -47,6 +47,7 @@
     "jsr:@std/ulid@1": "1.0.0",
     "npm:@types/node@*": "22.15.15",
     "npm:cluster-key-slot@1.1.0": "1.1.0",
+    "npm:knitting@~0.1.76": "0.1.76",
     "npm:sharp@*": "0.34.2",
     "npm:sharp@~0.34.2": "0.34.2"
   },
@@ -359,6 +360,9 @@
     "is-arrayish@0.3.2": {
       "integrity": "sha512-eVRqCvVlZbuw3GrM63ovNSNAeA1K16kaR/LRY/92w0zxQ5/1YzwblUX652i4Xs9RwAGjW9d9y6X88t8OaAJfWQ=="
     },
+    "knitting@0.1.76": {
+      "integrity": "sha512-Qlk6aQf60cUQVYLWiNOp+KILRwPT6vFR+JqYlIf1BaObHb5/Hw5vQs245+SinIjAcTYHHx2lApdgLa28AL2Rbw=="
+    },
     "semver@7.7.2": {
       "integrity": "sha512-RF0Fw+rO5AMf9MAyaRXI4AV0Ulj5lMHqVxxdSgiVbixSCXoEmmX/jk0CuJw4+3SqroYO9VoUh+HcuJivvtJemA==",
       "bin": true
@@ -498,6 +502,7 @@
       "jsr:@std/fs@^1.0.18",
       "jsr:@std/http@^1.0.18",
       "jsr:@std/ulid@1",
+      "npm:knitting@~0.1.76",
       "npm:sharp@~0.34.2"
     ]
   }

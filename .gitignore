@@ -6,3 +6,7 @@ export/*
 *.gzip
 *.z
 .vscode
+
+
+# dirty shit right here:
+node_modules

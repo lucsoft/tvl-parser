@@ -3,10 +3,9 @@ import { ulid } from "@std/ulid";
 import { CborDepthDecoderStream } from "./loading.ts";
 import { redis } from "./redis.ts";
 import { Collection, ParsedImage, RemoteImage } from "./spec.ts";
-const exportFile = await Deno.open("export.cbor.z", { read: true });
+const exportFile = await Deno.open("export.cbor", { read: true });
 
 const stream = exportFile.readable
-    .pipeThrough(new DecompressionStream("deflate"))
     .pipeThrough(new CborSequenceDecoderStream())
     .pipeThrough(new CborDepthDecoderStream<ParsedImage>());
 
@@ -68,7 +67,7 @@ for await (const element of stream) {
     if (cachedImage) {
         // the payload is about to be overwritten, so anything derived from it is stale
         pl.hdel(imageKey, "webp");
-        pl.hdel(imageKey, element.image.type === "tvl" ? "data" : "colorPalette", "indexedColors", "paletteSize");
+        pl.hdel(imageKey, "data", "deflated", "paletteSize");
     }
 
     pl.sadd(parentKey, imageKey);
@@ -79,13 +78,19 @@ for await (const element of stream) {
     pl.hset(imageKey, "contentSize", element.data.contentSize);
     pl.hset(imageKey, "options", JSON.stringify(element.data.options));
     pl.hset(imageKey, "dataType", element.image.type);
-    if (element.image.type === "tvl") {
-        pl.hset(imageKey, "paletteSize", element.image.paletteSize);
-        pl.hset(imageKey, "colorPalette", element.image.colorPalette);
-        pl.hset(imageKey, "indexedColors", element.image.indexedColors);
-    }
-    else {
-        pl.hset(imageKey, "data", element.image.data);
+    // Payloads stay deflated; whoever renders them inflates on demand.
+    switch (element.image.type) {
+        case "tvl":
+            pl.hset(imageKey, "paletteSize", element.image.paletteSize);
+            pl.hset(imageKey, "deflated", element.image.deflated);
+            break;
+        case "rgb":
+        case "rgba":
+            pl.hset(imageKey, "deflated", element.image.deflated);
+            break;
+        default:
+            pl.hset(imageKey, "data", element.image.data);
+            break;
     }
     await pl.flush();
 }

@@ -1,4 +1,5 @@
 import { assert } from "@std/assert";
+import zlib from "node:zlib";
 import { CborType, encodeCbor } from "@std/cbor";
 import { route, Route } from "@std/http/unstable-route";
 import sharp from "sharp";
@@ -149,7 +150,7 @@ const routes: Route[] = [
                 );
             }
 
-            const dataType = await redis.hget(imageKey, "dataType") as 'jpeg' | 'tvl' | 'unknown';
+            const dataType = await redis.hget(imageKey, "dataType") as RemoteImage[ "dataType" ];
 
             if (dataType === "unknown") {
                 return serveFail(req, new Error("Image format is unknown"));
@@ -159,10 +160,7 @@ const routes: Route[] = [
                 const redisData = await pipeline(pl => ({
                     height: pl.hget(imageKey, "height") as Promise<string>,
                     width: pl.hget(imageKey, "width") as Promise<string>,
-                    colorPalette: pl.sendCommand("HGET", [ imageKey, "colorPalette" ], {
-                        returnUint8Arrays: true
-                    }) as Promise<Uint8Array>,
-                    indexedColors: pl.sendCommand("HGET", [ imageKey, "indexedColors" ], {
+                    deflated: pl.sendCommand("HGET", [ imageKey, "deflated" ], {
                         returnUint8Arrays: true
                     }) as Promise<Uint8Array>,
                     paletteSize: pl.hget(imageKey, "paletteSize") as Promise<string>,
@@ -171,9 +169,14 @@ const routes: Route[] = [
 
                 const width = parseInt(redisData.width, 10);
                 const height = parseInt(redisData.height, 10);
-                const colorPalette = redisData.colorPalette;
-                const indexedColors = redisData.indexedColors;
-                const hasTransparency = JSON.parse(redisData.options).hasTransparency;
+                // Payloads are stored the way the .tvl held them, so inflate here.
+                const paletteSize = parseInt(redisData.paletteSize, 10);
+                const inflated = zlib.inflateSync(redisData.deflated);
+                const colorPalette = inflated.subarray(0, 3 * paletteSize);
+                const indexedColors = inflated.subarray(3 * paletteSize);
+                const options = JSON.parse(redisData.options);
+                const hasTransparency = options.hasTransparency === true;
+                const transparentColorIndex = options.transparentColorIndex ?? 0;
                 const bytes = 4;
                 const data = new Uint8Array(width * height * bytes);
 
@@ -184,7 +187,7 @@ const routes: Route[] = [
                         const r = colorPalette[ indexColorPalette * 3 ];
                         const g = colorPalette[ indexColorPalette * 3 + 1 ];
                         const b = colorPalette[ indexColorPalette * 3 + 2 ];
-                        const a = indexColorPalette === 0 && hasTransparency ? 0 : 255; // Handle transparency
+                        const a = indexColorPalette === transparentColorIndex && hasTransparency ? 0 : 255;
                         if (a === 0)
                             continue; // Skip transparent pixels
                         data[ (row * width + col) * bytes ] = r;
@@ -218,7 +221,7 @@ const routes: Route[] = [
                     }
                 });
             }
-            else if (dataType === "jpeg") {
+            else if (dataType === "jpeg" || dataType === "png") {
                 const data = await redis.sendCommand("HGET", [ imageKey, "data" ], {
                     returnUint8Arrays: true
                 });
