@@ -92,11 +92,15 @@ for await (const element of stream) {
 
 for (const [ collectionKey, imageIds ] of importedImages.entries()) {
     const images = await getImages(collectionKey);
-    if (images.length === imageIds.length) {
+    // Comparing lengths misses orphans whenever an id was imported more than
+    // once, because the duplicate padded the count back to equal.
+    const stillReferenced = new Set(imageIds);
+    const toBeDeleted = images.filter(image => !stillReferenced.has(image.id));
+
+    if (toBeDeleted.length === 0) {
         continue;
     }
 
-    const toBeDeleted = images.filter(image => !imageIds.includes(image.id));
     console.log(`Deleting ${toBeDeleted.length} images from collection ${collectionKey}`);
 
     for (const image of toBeDeleted) {
