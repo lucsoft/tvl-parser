@@ -52,15 +52,15 @@ for await (const element of stream) {
 
     const cachedImage = imagesCache.get(parentKey)!.find(image => image.fileName === element.data.fileName);
 
-    if (cachedImage) {
-        importedImages.get(parentKey)!.push(cachedImage.id);
-        continue;
-    }
-
     const pl = redis.pipeline();
-    // const imageKey = cachedImage ? `image:${cachedImage.id}` : `image:${ulid()}`;
-    const imageKey = `image:${ulid()}`;
+    const imageKey = cachedImage ? `image:${cachedImage.id}` : `image:${ulid()}`;
     importedImages.get(parentKey)!.push(imageKey.split(":")[ 1 ]);
+
+    if (cachedImage) {
+        // the payload is about to be overwritten, so anything derived from it is stale
+        pl.hdel(imageKey, "webp");
+        pl.hdel(imageKey, element.image.type === "tvl" ? "data" : "colorPalette", "indexedColors", "paletteSize");
+    }
 
     pl.sadd(parentKey, imageKey);
     pl.hset(imageKey, "fileName", element.data.fileName);
