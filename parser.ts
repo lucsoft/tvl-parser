@@ -48,10 +48,11 @@ await file.readable
                     Deno.exit(1);
                 }
 
-                // A zero sized record terminates the file. z2301.tvl ends with one that
-                // still claims contentSize 9, so the dimensions are the reliable signal.
+                // z2301.tvl carries a 0x0 record with contentSize 9 in the middle of the
+                // file. Skip past its payload - the 219 records behind it are fine.
                 if (data.width === 0 || data.height === 0) {
-                    break;
+                    options.byteOffset += data.contentSize;
+                    continue;
                 }
                 const storage = data.options.storage;
 
