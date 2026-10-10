@@ -24,6 +24,10 @@ const imagesCache = new Map<string, RemoteImage[]>();
 let imageCount = 0;
 
 const importedImages = new Map<string, string[]>();
+// 720 records corpus-wide share a fileName with an earlier record in the same
+// collection, 459 of them with different pixels. Counting occurrences gives
+// each one a stable identity across runs.
+const nameOccurrences = new Map<string, number>();
 
 for await (const element of stream) {
     if (!collections.find(collection => collection.fileName === element.source.fileName)) {
@@ -50,7 +54,12 @@ for await (const element of stream) {
         console.log(`Processed ${imageCount} images`);
     }
 
-    const cachedImage = imagesCache.get(parentKey)!.find(image => image.fileName === element.data.fileName);
+    const occurrenceKey = `${parentKey}|${element.data.fileName}`;
+    const nameIndex = nameOccurrences.get(occurrenceKey) ?? 0;
+    nameOccurrences.set(occurrenceKey, nameIndex + 1);
+
+    const cachedImage = imagesCache.get(parentKey)!
+        .find(image => image.fileName === element.data.fileName && image.nameIndex === nameIndex);
 
     const pl = redis.pipeline();
     const imageKey = cachedImage ? `image:${cachedImage.id}` : `image:${ulid()}`;
@@ -64,6 +73,7 @@ for await (const element of stream) {
 
     pl.sadd(parentKey, imageKey);
     pl.hset(imageKey, "fileName", element.data.fileName);
+    pl.hset(imageKey, "nameIndex", nameIndex);
     pl.hset(imageKey, "width", element.data.width);
     pl.hset(imageKey, "height", element.data.height);
     pl.hset(imageKey, "contentSize", element.data.contentSize);
@@ -103,16 +113,20 @@ async function getImages(collectionKey: string) {
     for (const imageKey of imagesInCollection) {
         pl.hget(imageKey, "fileName");
         pl.hget(imageKey, "dataType");
+        pl.hget(imageKey, "nameIndex");
     }
     const data = await pl.flush();
 
     for (const [ index, imageKey ] of imagesInCollection.entries()) {
-        const filename = data[ index * 2 ];
-        const dataType = data[ index * 2 + 1 ];
+        const filename = data[ index * 3 ];
+        const dataType = data[ index * 3 + 1 ];
+        const nameIndex = data[ index * 3 + 2 ];
         images.push({
             id: imageKey.split(":")[ 1 ],
             fileName: filename as string,
-            dataType: dataType as 'jpeg' | 'tvl' | 'unknown',
+            // entries written before nameIndex existed count as the first occurrence
+            nameIndex: nameIndex === null ? 0 : Number(nameIndex),
+            dataType: dataType as RemoteImage[ "dataType" ],
         });
     }
     return images;

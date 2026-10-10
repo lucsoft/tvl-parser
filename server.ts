@@ -105,16 +105,19 @@ const routes: Route[] = [
             for (const imageKey of imagesInCollection) {
                 pl.hget(imageKey, "fileName");
                 pl.hget(imageKey, "dataType");
+                pl.hget(imageKey, "nameIndex");
             }
             const data = await pl.flush();
 
             for (const [ index, imageKey ] of imagesInCollection.entries()) {
-                const filename = data[ index * 2 ];
-                const dataType = data[ index * 2 + 1 ];
+                const filename = data[ index * 3 ];
+                const dataType = data[ index * 3 + 1 ];
+                const nameIndex = data[ index * 3 + 2 ];
                 images.push({
                     id: imageKey.split(":")[ 1 ],
                     fileName: filename as string,
-                    dataType: dataType as 'jpeg' | 'tvl' | 'unknown',
+                    nameIndex: nameIndex === null ? 0 : Number(nameIndex),
+                    dataType: dataType as RemoteImage[ "dataType" ],
                 });
             }
 

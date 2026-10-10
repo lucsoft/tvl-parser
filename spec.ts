@@ -144,5 +144,7 @@ export type Collection = {
 export type RemoteImage = {
     id: string;
     fileName: string;
+    /** Disambiguates records that share a fileName inside one collection. */
+    nameIndex: number;
     dataType: Image[ "type" ];
 };
